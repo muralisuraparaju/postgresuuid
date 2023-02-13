@@ -21,6 +21,11 @@ CREATE TABLE employees (
   PRIMARY KEY (id)	
 );
 
+CREATE TABLE address (
+	id VARCHAR(100),
+	city VARCHAR(100),
+	state VARCHAR(100)
+);
 --
 -- Create two procedures to INSERT data. These procedures take the number of rows to be inserted as input
 CREATE PROCEDURE insert_books_data(recs INTEGER)
@@ -55,9 +60,29 @@ BEGIN
 END
 $$;
 --
--- INSERT 10 million records in each table. Record the time from pgAdmin
-CALL insert_books_data(10000000);
-CALL insert_employees_data(10000000);
+CREATE PROCEDURE insert_address_data(recs INTEGER)
+LANGUAGE plpgsql AS
+$$
+DECLARE 
+	address_city VARCHAR;
+	address_state VARCHAR;
+
+BEGIN
+	for i in 1..recs LOOP
+		SELECT CONCAT('city_' ,i) INTO address_city;
+		SELECT CONCAT('state_' ,i) INTO address_state;
+		INSERT INTO books (city, state) VALUES (address_city, address_state);
+		IF i % 10000 = 0 THEN
+			COMMIT;
+		END IF;
+	END LOOP;
+END
+$$;
+--
+-- INSERT 100K records in each table. Record the time from pgAdmin
+CALL insert_books_data(100000);
+CALL insert_employees_data(100000);
+CALL insert_employees_data(100000);
 
 --
 -- Perform a SELECT and check the timing using EXPLAIN
@@ -67,3 +92,4 @@ CALL insert_employees_data(10000000);
 
 EXPLAIN (FORMAT JSON, ANALYZE, TIMING, BUFFERS TRUE, VERBOSE TRUE) SELECT * FROM books WHERE id='2f5a8a79-f8f6-4e69-94aa-637bf4bb3271';
 EXPLAIN (FORMAT JSON, ANALYZE, TIMING, BUFFERS TRUE, VERBOSE TRUE) SELECT * FROM employees WHERE id=1345;
+EXPLAIN (FORMAT JSON, ANALYZE, TIMING, BUFFERS TRUE, VERBOSE TRUE) SELECT * FROM address WHERE id='';
