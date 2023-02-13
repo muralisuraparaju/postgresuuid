@@ -24,10 +24,11 @@ CREATE TABLE employees (
 CREATE TABLE address (
 	id VARCHAR(100),
 	city VARCHAR(100),
-	state VARCHAR(100)
+	state VARCHAR(100),
+	PRIMARY KEY (id)
 );
 --
--- Create two procedures to INSERT data. These procedures take the number of rows to be inserted as input
+-- Create three procedures to INSERT data. These procedures take the number of rows to be inserted as input
 CREATE PROCEDURE insert_books_data(recs INTEGER)
 LANGUAGE plpgsql AS
 $$
@@ -64,14 +65,16 @@ CREATE PROCEDURE insert_address_data(recs INTEGER)
 LANGUAGE plpgsql AS
 $$
 DECLARE 
+    address_id VARCHAR;
 	address_city VARCHAR;
 	address_state VARCHAR;
 
 BEGIN
 	for i in 1..recs LOOP
+		SELECT CONCAT('id0000-1234545-98756453-00' ,i) INTO address_id;
 		SELECT CONCAT('city_' ,i) INTO address_city;
 		SELECT CONCAT('state_' ,i) INTO address_state;
-		INSERT INTO books (city, state) VALUES (address_city, address_state);
+		INSERT INTO address (id, city, state) VALUES (address_id, address_city, address_state);
 		IF i % 10000 = 0 THEN
 			COMMIT;
 		END IF;
