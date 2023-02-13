@@ -1,2 +1,3 @@
 # postgresuuid
-Sample tables and insert scripts to test the performance of UUIDs as primary keys vs surrogate keys
+Use the sql file to create tables, stored procedures in a Postgres database.
+Run the stored procedure and get the timings for INSERT and SELECT operations.
