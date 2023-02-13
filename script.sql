@@ -1,0 +1,3 @@
+-- ADD UUID extension
+ALTER ROLE postgres SUPERUSER;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
